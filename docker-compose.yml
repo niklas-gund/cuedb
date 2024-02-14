@@ -1,0 +1,13 @@
+version: "0.0.1"
+services:
+  backend:
+    build: ./backend
+    restart: always
+
+  frontend:
+    build: ./frontend
+    links:
+      - "backend"
+    ports:
+      - 12345:12345
+    restart: always
