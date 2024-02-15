@@ -1,7 +1,18 @@
 version: "0.0.1"
 services:
+  proxy:
+    build: ./proxy
+    restart: always
+    ports:
+      - "8080:8080"
+    links:
+      - backend
+      - frontend
+
   backend:
     build: ./backend
+    ports:
+      - 11111:11111
     restart: always
 
   frontend:
@@ -9,5 +20,18 @@ services:
     links:
       - "backend"
     ports:
-      - 12345:12345
+      - 12345:80
     restart: always
+  data:
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./cuedata:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_DB: cuedb
+      POSTGRES_USER: cuedb
+      POSTGRES_PASSWORD: cuedb
+
+volumes:
+  postgres: {}

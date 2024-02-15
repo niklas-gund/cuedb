@@ -1,2 +1,8 @@
 FROM node:18
-CMD "echo 'hello world'"
+WORKDIR /srv
+COPY package* ./
+COPY yarn.lock ./
+COPY . ./
+RUN yarn
+RUN yarn build
+CMD yarn start

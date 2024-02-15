@@ -66,6 +66,12 @@ CREATE TABLE "contributors" (
   "tmdb_id" varchar
 );
 
+CREATE TABLE "db_version" (
+  db_version int NOT NULL PRIMARY KEY
+)
+
+INSERT INTO db_version (db_version) VALUES (1)
+
 -- Add foreign key constraints
 ALTER TABLE "users" ADD FOREIGN KEY ("role") REFERENCES "roles" ("id");
 ALTER TABLE "movies" ADD FOREIGN KEY ("added_by") REFERENCES "users" ("id");
@@ -77,3 +83,7 @@ ALTER TABLE "composers_in_cue" ADD FOREIGN KEY ("cue") REFERENCES "cues" ("id");
 ALTER TABLE "composers_in_cue" ADD FOREIGN KEY ("contributor") REFERENCES "contributors" ("id");
 ALTER TABLE "orchestrators_in_cue" ADD FOREIGN KEY ("cue") REFERENCES "cues" ("id");
 ALTER TABLE "orchestrators_in_cue" ADD FOREIGN KEY ("contributor") REFERENCES "contributors" ("id");
+
+-- SOME BASE VALUES
+INSERT INTO roles ('name' ,'perm_add_movie' ,'perm_submit_set' ,'perm_review_set' ,'perm_user_rights_management' ,'perm_add_contributor')
+VALUES ('default', true, true, false, false, true)
