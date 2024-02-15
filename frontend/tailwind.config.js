@@ -3,6 +3,11 @@ export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}" /* src folder, for example */],
   theme: {
     extend: {
+      // Sizes ---------------------
+      spacing: {
+        128: "32rem",
+      },
+      // Colors --------------------
       colors: {
         navy: {
           50: "#f1f4ff",

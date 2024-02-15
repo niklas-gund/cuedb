@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage.tsx";
 import Layout from "./routes/Layout.tsx";
 import "./tailwind.css";
+import Signup from "./routes/Signup.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <div className="p-6">Home</div> },
       { path: "/about", element: <div>ABOUT</div> },
+      { path: "/signup", element: <Signup /> },
     ],
   },
 ]);
