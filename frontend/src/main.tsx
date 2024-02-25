@@ -5,6 +5,7 @@ import ErrorPage from "./routes/ErrorPage.tsx";
 import Layout from "./routes/Layout.tsx";
 import "./tailwind.css";
 import Signup from "./routes/Signup.tsx";
+import Login from "./routes/Login.tsx";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
       { path: "/", element: <div className="p-6">Home</div> },
       { path: "/about", element: <div>ABOUT</div> },
       { path: "/signup", element: <Signup /> },
+      { path: "/login", element: <Login /> },
     ],
   },
 ]);

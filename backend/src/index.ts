@@ -2,6 +2,10 @@ import dotenv from "dotenv";
 import express from "express";
 import { Pool } from "pg";
 import { runDBScript } from "./database/dbscript";
+import { StandardResponseWriter, parseQuery } from "./tools";
+import { genSalt, hash } from "bcrypt";
+import { addUser, login } from "./usermanagement";
+import { runMigrations } from "./database/migrations";
 
 dotenv.config();
 
@@ -34,6 +38,9 @@ pool
     }
     console.error(error);
     process.exit(2378);
+  })
+  .finally(() => {
+    runMigrations(pool);
   });
 
 app.get("/", async (req, res) => {
@@ -45,8 +52,44 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/api/jens", (req, res) => {
-  res.send("Jens endpoint!!!!!");
+app.get("/api/signup", async (req, res) => {
+  try {
+    const { username, password } = parseQuery(req, ["username", "password"]);
+    if (username.length < 4) {
+      throw new Error("Username must have at least 4 characters");
+    }
+    if (password.length < 8) {
+      throw new Error("Password must be at least 8 characters long");
+    }
+
+    const salt = await genSalt(10);
+    const hashedPW = await hash(password, salt);
+    const [success, error] = await addUser(username, hashedPW, pool);
+    if (success) {
+      res.json(StandardResponseWriter.success(true));
+    } else {
+      res.json(StandardResponseWriter.error(error));
+    }
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/login", async (req, res) => {
+  try {
+    const { username, password } = parseQuery(req, ["username", "password"]);
+    const loginRes = await login(username, password, pool);
+    res.cookie("cuedb-token", loginRes.session, {
+      path: "/",
+      maxAge: loginRes.maxAge,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+    res.json(loginRes.userInfo);
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
 });
 
 app.listen(PORT, () => {

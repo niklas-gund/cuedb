@@ -7,6 +7,12 @@ CREATE TABLE "users" (
   "created_at" timestamp
 );
 
+CREATE TABLE "sessions" (
+  "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  "user_id" UUID REFERENCES users(id),
+  "expires" timestamp
+)
+
 CREATE TABLE "roles" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" text,
@@ -70,7 +76,7 @@ CREATE TABLE "db_version" (
   db_version int NOT NULL PRIMARY KEY
 )
 
-INSERT INTO db_version (db_version) VALUES (1)
+INSERT INTO db_version (db_version) VALUES (2)
 
 -- Add foreign key constraints
 ALTER TABLE "users" ADD FOREIGN KEY ("role") REFERENCES "roles" ("id");
