@@ -16,3 +16,7 @@ type UserInfo = {
   username: string;
   permissions: CuePermissions;
 };
+
+interface SessionInfo extends UserInfo {
+  userID: string;
+}

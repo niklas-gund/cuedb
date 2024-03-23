@@ -2,10 +2,13 @@ import dotenv from "dotenv";
 import express from "express";
 import { Pool } from "pg";
 import { runDBScript } from "./database/dbscript";
-import { StandardResponseWriter, parseQuery } from "./tools";
+import { StandardResponseWriter, checkSession, parseQuery } from "./tools";
 import { genSalt, hash } from "bcrypt";
 import { addUser, login } from "./usermanagement";
 import { runMigrations } from "./database/migrations";
+import { searchMovies, searchPerson } from "./TMDBConnector";
+import { addMovie, searchLocalMovies } from "./moviemanagement";
+import { addContributor } from "./contributors";
 
 dotenv.config();
 
@@ -86,7 +89,65 @@ app.get("/api/login", async (req, res) => {
       secure: true,
       sameSite: "lax",
     });
-    res.json(loginRes.userInfo);
+    res.json(StandardResponseWriter.success(loginRes.userInfo));
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/movies/search", async (req, res) => {
+  try {
+    const { query } = parseQuery(req, ["query"]);
+    const userInfo = await checkSession(req, pool);
+    if (userInfo.permissions.perm_add_movie) {
+      const result = await searchMovies(query);
+      res.json(StandardResponseWriter.success(result));
+    }
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/movies/search-local", async (req, res) => {
+  try {
+    const { query } = parseQuery(req, ["query"]);
+    const result = await searchLocalMovies(query, pool);
+    res.json(StandardResponseWriter.success(result));
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/movies/add", async (req, res) => {
+  try {
+    const { tmdbID, title } = parseQuery(req, ["tmdbID", "title"]);
+    const userInfo = await checkSession(req, pool);
+    await addMovie(tmdbID, title, userInfo, pool);
+    res.json(StandardResponseWriter.success(true));
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/people/search", async (req, res) => {
+  try {
+    const { query } = parseQuery(req, ["query"]);
+    const userInfo = await checkSession(req, pool);
+    if (userInfo.permissions.perm_add_contributor) {
+      const result = await searchPerson(query);
+      res.json(StandardResponseWriter.success(result));
+    }
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/people/add", async (req, res) => {
+  try {
+    const { tmdbID, name } = parseQuery(req, ["tmdbID", "name"]);
+    const userInfo = await checkSession(req, pool);
+    await addContributor(tmdbID, name, userInfo, pool);
+    res.json(StandardResponseWriter.success(true));
   } catch (error) {
     res.json(StandardResponseWriter.error(String(error)));
   }

@@ -13,6 +13,7 @@ interface UserState {
   };
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setUsername: (name: string) => void;
+  setAccessRights: (rights: UserState["accessrights"]) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -30,6 +31,8 @@ export const useUserStore = create<UserState>()(
         },
         setIsLoggedIn: (loggedIn) => set(() => ({ isLoggedIn: loggedIn })),
         setUsername: (name) => set(() => ({ username: name })),
+        setAccessRights: (rights: UserState["accessrights"]) =>
+          set(() => ({ accessrights: rights })),
       }),
       {
         name: "user-store",

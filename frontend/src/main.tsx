@@ -1,28 +1,48 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import ErrorPage from "./routes/ErrorPage.tsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./routes/Layout.tsx";
 import "./tailwind.css";
 import Signup from "./routes/Signup.tsx";
 import Login from "./routes/Login.tsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
-      { path: "/", element: <div className="p-6">Home</div> },
-      { path: "/about", element: <div>ABOUT</div> },
-      { path: "/signup", element: <Signup /> },
-      { path: "/login", element: <Login /> },
-    ],
-  },
-]);
+import MovieSearch from "./routes/movies/MovieSearch.tsx";
+import { ProtectedRoute } from "./PortectedRoute.tsx";
+import ContributorSearch from "./routes/movies/ContributorSearch.tsx";
+import EditCueSet from "./routes/cues/EditCueSet.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/search-movie"
+            element={
+              <ProtectedRoute>
+                <MovieSearch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/search-contributor"
+            element={
+              <ProtectedRoute>
+                <ContributorSearch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-cue-set/:id?"
+            element={
+              <ProtectedRoute>
+                <EditCueSet />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );

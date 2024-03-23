@@ -44,10 +44,32 @@ export async function login(
   const passwordMatch = await compare(password, users.rows[0].password_hash);
   if (!passwordMatch) throw new Error("Wrong username or password incorrect");
   // get permissions
+  const permissions: CuePermissions = await getUserPermissions(
+    pool,
+    users.rows[0].role
+  );
+  const maxAgeHours = 12;
+  const maxAge = maxAgeHours * 60 * 60 * 1000;
+  // add session
+  const session = await pool.query(
+    `INSERT INTO sessions (user_id, expires) VALUES ($1, CURRENT_TIMESTAMP + INTERVAL '${maxAgeHours} hours') RETURNING id`,
+    [users.rows[0].id]
+  );
+
+  return {
+    userInfo: {
+      username,
+      permissions,
+    },
+    session: session.rows[0].id,
+    maxAge,
+  };
+}
+export async function getUserPermissions(pool: Pool, roleID: string) {
   const permissionRows = await pool.query(
     `SELECT perm_add_movie, perm_submit_set, perm_review_set, perm_user_rights_management, perm_add_contributor 
      FROM roles WHERE id=$1`,
-    [users.rows[0].role]
+    [roleID]
   );
 
   const permissions: CuePermissions = {
@@ -58,19 +80,5 @@ export async function login(
       permissionRows.rows[0].perm_user_rights_management,
     perm_add_contributor: permissionRows.rows[0].perm_add_contributor,
   };
-
-  const maxAge = 12 * 60 * 60 * 1000;
-  // add session
-  const session = await pool.query(
-    `INSERT INTO sessions (user_id, expires) VALUES ($1, to_timestamp($2)) RETURNING id`,
-    [users.rows[0].id, Date.now() + maxAge]
-  );
-  return {
-    userInfo: {
-      username,
-      permissions,
-    },
-    session: session.rows[0].id,
-    maxAge,
-  };
+  return permissions;
 }

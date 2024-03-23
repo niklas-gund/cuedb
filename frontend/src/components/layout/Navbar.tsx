@@ -15,6 +15,15 @@ export default function Navbar() {
           <img className="w-24" src={LogoSVG} alt="logo" />
         </NavLink>
         <div className="mx-auto" />
+        <NavLink className={navLinkActiveClass} to="/edit-cue-set">
+          Add Cues
+        </NavLink>
+        <NavLink className={navLinkActiveClass} to="/search-contributor">
+          Add Contributor
+        </NavLink>
+        <NavLink className={navLinkActiveClass} to="/search-movie">
+          Add Movie
+        </NavLink>
         <NavLink className={navLinkActiveClass} to="/about">
           About
         </NavLink>
