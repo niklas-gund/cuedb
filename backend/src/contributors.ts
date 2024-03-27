@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { stringToSQLFullTextQuery } from "./tools";
+import { getContributorByID } from "./TMDBConnector";
 
 export async function addContributor(
   tmdb_id: string,
@@ -19,11 +20,17 @@ export async function addContributor(
 }
 
 export async function searchLocalContributor(query: string, pool: Pool) {
-  const cleanedQuery = stringToSQLFullTextQuery(query)
+  const cleanedQuery = stringToSQLFullTextQuery(query);
   const results = await pool.query(
-    `SELECT title, tmdb_id FROM movies 
-     WHERE to_tsvector('english', title) @@ to_tsquery('english', $1)`,
+    `SELECT name, tmdb_id FROM contributors 
+     WHERE to_tsvector('english', name) @@ to_tsquery('english', $1)`,
     [cleanedQuery]
   );
-  return results.rows;
+  //!
+  console.log(results.rows);
+  // fill in data
+  const persons = await Promise.all(
+    results.rows.map(async (r) => await getContributorByID(r.tmdb_id))
+  );
+  return persons;
 }

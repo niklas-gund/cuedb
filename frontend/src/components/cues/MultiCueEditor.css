@@ -1,0 +1,11 @@
+th {
+    @apply px-4;
+}
+
+tr {
+    @apply border-b even:bg-navy-50;
+}
+
+td {
+    @apply p-4;
+}

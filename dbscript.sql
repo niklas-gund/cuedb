@@ -26,7 +26,7 @@ CREATE TABLE "roles" (
 CREATE TABLE "movies" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "title" varchar,
-  "tmdb_id" varchar,
+  "tmdb_id" varchar UNIQUE,
   "added_at" timestamp,
   "added_by" UUID
 );
@@ -69,14 +69,14 @@ CREATE TABLE "orchestrators_in_cue" (
 CREATE TABLE "contributors" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" varchar,
-  "tmdb_id" varchar
+  "tmdb_id" varchar UNIQUE
 );
 
 CREATE TABLE "db_version" (
   db_version int NOT NULL PRIMARY KEY
 )
 
-INSERT INTO db_version (db_version) VALUES (2)
+INSERT INTO db_version (db_version) VALUES (3)
 
 -- Add foreign key constraints
 ALTER TABLE "users" ADD FOREIGN KEY ("role") REFERENCES "roles" ("id");

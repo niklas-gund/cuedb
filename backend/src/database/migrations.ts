@@ -44,4 +44,15 @@ export const MIGRATIONS: MigrationEntry[] = [
     `);
     },
   },
+  {
+    from: 2,
+    to: 3,
+    migrationFunction: async (pool) => {
+      // add unique constrain to tmdb_id in movies and contributors
+      await pool.query(`
+      ALTER TABLE movies ADD CONSTRAINT movies_tmdb_id_unique UNIQUE (tmdb_id);
+      ALTER TABLE contributors ADD CONSTRAINT contributors_tmdb_id_unique UNIQUE (tmdb_id);
+      `);
+    },
+  },
 ];

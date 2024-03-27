@@ -3,6 +3,7 @@ const API_KEY = "26a43d82f599e9c54e5ece77b6953144";
 const ENDPOINTS = {
   single_movie: "3/movie/",
   movieSearch: "3/search/movie",
+  single_person: "3/person/",
 };
 
 async function requestWithKey(endpoint: string, additionalParams = "") {
@@ -32,6 +33,22 @@ export async function getSingleMovie(tmdb_id: number) {
     const movieInfo = await requestWithKey(ENDPOINTS.single_movie + tmdb_id);
     singleMovieCache.set(tmdb_id, movieInfo);
     return movieInfo;
+  }
+}
+
+const singlePersonCache = new Map<string, any>();
+// clear every 3 days
+setInterval(singlePersonCache.clear, 3 * 24 * 60 * 60 * 1000);
+
+export async function getContributorByID(tmdb_id: string) {
+  const cached = singlePersonCache.get(tmdb_id);
+  if (cached != undefined) {
+    console.log("Using cache for single person " + tmdb_id);
+    return cached;
+  } else {
+    const personInfo = await requestWithKey(ENDPOINTS.single_person + tmdb_id);
+    singlePersonCache.set(tmdb_id, personInfo);
+    return personInfo;
   }
 }
 

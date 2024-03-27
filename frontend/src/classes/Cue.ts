@@ -1,12 +1,10 @@
-import { Contributor } from "./Contributor";
-
 export interface Cue {
   id: string | undefined;
   rank: number;
   slate: string;
   title: string;
-  composers: Contributor[];
-  orchestrators: Contributor[];
+  composers: string[];
+  orchestrators: string[];
 }
 
 export function createCue(cue: Partial<Cue> = {}): Cue {

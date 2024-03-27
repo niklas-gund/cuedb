@@ -62,6 +62,13 @@ export default class APIConnector {
       new URLSearchParams(options)
     );
   }
+
+  public static async searchLocalContributor(options: { query: string }) {
+    return APIConnector.callAPI<PersonSearchResult[]>(
+      "/api/people/search-local",
+      new URLSearchParams(options)
+    );
+  }
 }
 
 export type CuePermissions = {

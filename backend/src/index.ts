@@ -8,7 +8,7 @@ import { addUser, login } from "./usermanagement";
 import { runMigrations } from "./database/migrations";
 import { searchMovies, searchPerson } from "./TMDBConnector";
 import { addMovie, searchLocalMovies } from "./moviemanagement";
-import { addContributor } from "./contributors";
+import { addContributor, searchLocalContributor } from "./contributors";
 
 dotenv.config();
 
@@ -137,6 +137,16 @@ app.get("/api/people/search", async (req, res) => {
       const result = await searchPerson(query);
       res.json(StandardResponseWriter.success(result));
     }
+  } catch (error) {
+    res.json(StandardResponseWriter.error(String(error)));
+  }
+});
+
+app.get("/api/people/search-local", async (req, res) => {
+  try {
+    const { query } = parseQuery(req, ["query"]);
+    const result = await searchLocalContributor(query, pool);
+    res.json(StandardResponseWriter.success(result));
   } catch (error) {
     res.json(StandardResponseWriter.error(String(error)));
   }

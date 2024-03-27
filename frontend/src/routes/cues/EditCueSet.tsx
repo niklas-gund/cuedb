@@ -3,6 +3,7 @@ import MoviePickerLocal from "../../components/datapickers/MoviePickerLocal";
 import { useState } from "react";
 import { emptyCueset } from "../../classes/CueSet";
 import { PhotoIcon } from "@heroicons/react/16/solid";
+import CueEditor from "../../components/cues/MultiCueEditor";
 
 export default function EditCueSet() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ export default function EditCueSet() {
   const [cueSet, setCueSet] = useState(emptyCueset());
   return (
     <div>
+      <div className="bg-navy-50 p-4 rounded-b-lg">
       <h1 className="text-3xl font-semibold my-2">
         {id == undefined ? "Add a Cue Set" : "Edit a Cue Set"}
       </h1>
@@ -55,6 +57,10 @@ export default function EditCueSet() {
             placeholder="Cue Source (e.g. GEMA, sheets, sessions,...)"
           />
         </div>
+      </div>
+      </div>
+      <div>
+        <CueEditor />
       </div>
     </div>
   );
