@@ -67,3 +67,10 @@ function parseCookies(req: Request) {
   });
   return cookies;
 }
+
+export function stringToSQLFullTextQuery(input:string) {
+  return input
+  .split(" ")
+  .map((word) => word.replace(/[^a-zA-Z0-9]/g, ""))
+  .join(" & ");
+}

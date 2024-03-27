@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { stringToSQLFullTextQuery } from "./tools";
 
 export async function addContributor(
   tmdb_id: string,
@@ -15,4 +16,14 @@ export async function addContributor(
   } else {
     throw new Error("User is not allowed to add contributors");
   }
+}
+
+export async function searchLocalContributor(query: string, pool: Pool) {
+  const cleanedQuery = stringToSQLFullTextQuery(query)
+  const results = await pool.query(
+    `SELECT title, tmdb_id FROM movies 
+     WHERE to_tsvector('english', title) @@ to_tsquery('english', $1)`,
+    [cleanedQuery]
+  );
+  return results.rows;
 }
