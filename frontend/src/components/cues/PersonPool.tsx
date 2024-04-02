@@ -8,19 +8,20 @@ export default function PersonPool(props: {
 }) {
   const [persons, setPersons] = useState<PersonSearchResult[]>([]);
 
-  // update when we update persons
-  React.useEffect(() => {
-    props.onUpdate(persons);
-  }, [persons]);
+  const addPerson = (person: PersonSearchResult) => {
+    setPersons((persons) => {
+      const newPersons = [...persons, person];
+      props.onUpdate(newPersons);
+      return newPersons;
+    });
+  };
 
   return (
     <div>
       <h1>Contributors (composers & orchestrators)</h1>
       <div className="flex w-auto gap-4">
         <div>
-          <PersonPickerLocal
-            onSelect={(person) => setPersons([...persons, person])}
-          />
+          <PersonPickerLocal onSelect={(person) => addPerson(person)} />
         </div>
         <div className="w-full flex flex-wrap gap-2">
           {persons.map((person) => (

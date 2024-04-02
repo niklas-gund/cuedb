@@ -9,7 +9,7 @@ export interface Cue {
 
 export function createCue(cue: Partial<Cue> = {}): Cue {
   return {
-    id: cue.id,
+    id: cue.id || crypto.randomUUID(),
     rank: cue.rank || 0,
     slate: cue.slate || "",
     title: cue.title || "",

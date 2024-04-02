@@ -1,11 +1,11 @@
 th {
-    @apply px-4;
+  @apply px-4;
 }
 
 tr {
-    @apply border-b even:bg-navy-50;
+  @apply border-b even:bg-slate-50;
 }
 
 td {
-    @apply p-4;
+  @apply p-4;
 }

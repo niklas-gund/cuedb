@@ -11,7 +11,12 @@ import MultiContributorSelector from "../datapickers/MultiContributorSelector";
 export default function SingleCueEditor(props: {
   cue: Cue;
   contributorPool: PersonSearchResult[];
+  canMoveUp: boolean;
+  canMoveDown: boolean;
   updateCue: (cue: Cue) => void;
+  onDelete: () => void;
+  onUp: () => void;
+  onDown: () => void;
 }) {
   const [cue, setCue] = useState(props.cue);
 
@@ -43,16 +48,29 @@ export default function SingleCueEditor(props: {
         />
       </td>
       <td>
-        <input value={cue.orchestrators.join(", ")} />
+        <MultiContributorSelector
+          pool={props.contributorPool}
+          onUpdate={(persons) =>
+            updateCue({ orchestrators: persons.map((p) => p.id.toString()) })
+          }
+        />
       </td>
       <td className="flex gap-2">
-        <button>
+        <button onClick={props.onDelete}>
           <TrashIcon className="w-6 h-6" />
         </button>
-        <button>
+        <button
+          onClick={props.onUp}
+          disabled={!props.canMoveUp}
+          className="disabled:text-gray-400"
+        >
           <ArrowUpCircleIcon className="w-6 h-6" />
         </button>
-        <button>
+        <button
+          onClick={props.onDown}
+          disabled={!props.canMoveDown}
+          className="disabled:text-gray-400"
+        >
           <ArrowDownCircleIcon className="w-6 h-6" />
         </button>
       </td>
