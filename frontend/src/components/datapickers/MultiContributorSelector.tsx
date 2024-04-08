@@ -1,37 +1,36 @@
 import { useState } from "react";
 import { PersonSearchResult } from "../../APIConnector";
 import { XCircleIcon } from "@heroicons/react/16/solid";
-import React from "react";
 
 export default function MultiContributorSelector(props: {
   pool: PersonSearchResult[];
+  selectedContributors: PersonSearchResult[];
   onUpdate: (persons: PersonSearchResult[]) => void;
 }) {
   const [selectedContributors, setSelectedContributors] = useState<
     PersonSearchResult[]
-  >([]);
+  >(props.selectedContributors);
   const [selectValue, setSelectValue] = useState("");
 
   const availableContributors = props.pool.filter(
     (p) => !selectedContributors.some((c) => c.id === p.id)
   );
-
   const addContributor = (id: string) => {
-    const newElement = props.pool.find((p) => p.id.toString() == id);
-    if (newElement)
-      setSelectedContributors((selectedContributors) => [
-        ...selectedContributors,
-        newElement,
-      ]);
-    setSelectValue("");
-    props.onUpdate(selectedContributors);
+    const newElement = props.pool.find((p) => p.id.toString() === id);
+    if (newElement) {
+      const updatedContributors = [...selectedContributors, newElement];
+      setSelectedContributors(updatedContributors);
+      setSelectValue("");
+      props.onUpdate(updatedContributors);
+    }
   };
 
   const removeContributor = (id: string) => {
-    setSelectedContributors((oldPool) =>
-      oldPool.filter((p) => p.id.toString() != id)
+    const updatedContributors = selectedContributors.filter(
+      (p) => p.id.toString() !== id
     );
-    props.onUpdate(selectedContributors);
+    setSelectedContributors(updatedContributors);
+    props.onUpdate(updatedContributors);
   };
 
   const hideSelect = availableContributors.length === 0;

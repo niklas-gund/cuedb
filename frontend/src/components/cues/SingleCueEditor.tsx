@@ -20,9 +20,13 @@ export default function SingleCueEditor(props: {
 }) {
   const [cue, setCue] = useState(props.cue);
 
+  // Fix one step behind react bug
   const updateCue = (update: Partial<Cue>) => {
-    setCue((cue) => ({ ...cue, ...update }));
-    props.updateCue(cue);
+    setCue((prevCue) => {
+      const newCue = { ...prevCue, ...update };
+      props.updateCue(newCue);
+      return newCue;
+    });
   };
 
   return (
@@ -31,17 +35,22 @@ export default function SingleCueEditor(props: {
         <input
           value={cue.slate}
           onChange={(e) => updateCue({ slate: e.target.value })}
+          placeholder="Slate (e.g. 1m02)"
         />
       </td>
       <td>
         <input
           value={cue.title}
           onChange={(e) => updateCue({ title: e.target.value })}
+          placeholder="Title (e.g. Opening)"
         />
       </td>
       <td>
         <MultiContributorSelector
           pool={props.contributorPool}
+          selectedContributors={props.contributorPool.filter((p) =>
+            cue.composers.includes(p.id.toString())
+          )}
           onUpdate={(persons) =>
             updateCue({ composers: persons.map((p) => p.id.toString()) })
           }
@@ -50,6 +59,9 @@ export default function SingleCueEditor(props: {
       <td>
         <MultiContributorSelector
           pool={props.contributorPool}
+          selectedContributors={props.contributorPool.filter((p) =>
+            cue.orchestrators.includes(p.id.toString())
+          )}
           onUpdate={(persons) =>
             updateCue({ orchestrators: persons.map((p) => p.id.toString()) })
           }

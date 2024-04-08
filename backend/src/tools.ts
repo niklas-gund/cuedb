@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { Pool } from "pg";
+import { Pool, PoolClient } from "pg";
 import { getUserPermissions } from "./usermanagement";
 
 export class StandardResponseWriter {
@@ -68,9 +68,29 @@ function parseCookies(req: Request) {
   return cookies;
 }
 
-export function stringToSQLFullTextQuery(input:string) {
+export function stringToSQLFullTextQuery(input: string) {
   return input
-  .split(" ")
-  .map((word) => word.replace(/[^a-zA-Z0-9]/g, ""))
-  .join(" & ");
+    .split(" ")
+    .map((word) => word.replace(/[^a-zA-Z0-9]/g, ""))
+    .join(" & ");
 }
+
+export const tx = async (
+  pool: Pool,
+  callback: (client: PoolClient) => Promise<void>
+) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    try {
+      await callback(client);
+      await client.query("COMMIT");
+    } catch (e) {
+      console.error(e);
+      await client.query("ROLLBACK");
+    }
+  } finally {
+    client.release();
+  }
+};

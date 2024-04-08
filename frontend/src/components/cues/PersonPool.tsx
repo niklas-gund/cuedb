@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { PersonSearchResult } from "../../APIConnector";
 import PersonPickerLocal from "../datapickers/PersonPickerLocal";
-import React from "react";
 
 export default function PersonPool(props: {
   onUpdate: (persons: PersonSearchResult[]) => void;

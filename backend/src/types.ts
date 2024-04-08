@@ -20,3 +20,21 @@ type UserInfo = {
 interface SessionInfo extends UserInfo {
   userID: string;
 }
+
+interface FrontendCueSet {
+  cueSource: string;
+  movieID: string;
+  cues: FrontendCue[];
+}
+
+interface FrontendCue {
+  id: string;
+  slate: string;
+  title: string;
+  composers: string[];
+  orchestrators: string[];
+}
+
+interface BackendCue extends FrontendCue {
+  rank: number;
+}

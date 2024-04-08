@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./MultiCueEditor.css";
-import { Cue, createCue } from "../../classes/Cue";
+import { Cue, cloneCue, createCue } from "../../classes/Cue";
 import SingleCueEditor from "./SingleCueEditor";
 import PersonPool from "./PersonPool";
 import { PersonSearchResult } from "../../APIConnector";
@@ -8,6 +8,7 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 
 export default function CueEditor() {
   const [cues, setCues] = useState([] as Cue[]);
+  const [templateCue, setTemplateCue] = useState(createCue());
   const [addCueAmount, setAddCueAmount] = useState(1);
   const [contributorPool, setPersons] = useState([] as PersonSearchResult[]);
 
@@ -72,6 +73,32 @@ export default function CueEditor() {
           })}
         </tbody>
       </table>
+      <div className="my-4 flex items-center">
+        <button
+          className="rounded bg-navy-950 p-2 text-white font-bold ml-auto"
+          onClick={() => console.log(cues)}
+        >
+          Save cues
+        </button>
+      </div>
+      {/* Add cue */}
+      <hr className="my-4" />
+      <h2 className="text-2xl font-semibold">Cue Template</h2>
+      <table>
+        <tbody>
+          <SingleCueEditor
+            cue={templateCue}
+            updateCue={(cue) => setTemplateCue(cue)}
+            contributorPool={contributorPool}
+            key="template"
+            canMoveDown={false}
+            canMoveUp={false}
+            onDelete={() => {}}
+            onUp={() => {}}
+            onDown={() => {}}
+          />
+        </tbody>
+      </table>
       <div className="w-full my-4 flex items-center">
         <div className="m-auto flex items-center gap-4">
           <input
@@ -82,10 +109,7 @@ export default function CueEditor() {
           <button
             onClick={() => {
               for (let i = 0; i < addCueAmount; i++) {
-                setCues((cues) => [
-                  ...cues,
-                  createCue({ slate: "Dieter", title: "Cue 1" }),
-                ]);
+                setCues((cues) => [...cues, createCue(cloneCue(templateCue))]);
               }
             }}
           >
